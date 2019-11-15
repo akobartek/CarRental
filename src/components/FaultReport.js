@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import ImageUpload from "./ImageUpload";
 import CancelReportButton from "./CancelReportButton";
 import SendReportButton from "./SendReportButton";
