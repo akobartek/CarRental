@@ -1,0 +1,136 @@
+.Main-body {
+  background-color: #fff;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  width: 40vh;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  color: #000;
+}
+
+.SearchResult-body {
+  background-color: #fff;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  color: #000;
+}
+
+.CarDetails-body {
+  background-color: #fff;
+  margin-left: 7vh;
+  margin-right: 7vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  color: #000;
+}
+
+.FaultReport-body {
+  background-color: #fff;
+  margin-left: 2vh;
+  margin-right: 2vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  font-size: 18px;
+  color: #000;
+}
+
+.SearchForm {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-left: 5vh;
+  margin-right: 5vh;
+}
+
+.Title {
+  margin: 3vh;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+}
+
+.RowMust {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.Row {
+  margin-bottom: 10px;
+}
+
+.ColumnMust {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.Column {
+  margin-bottom: 10px;
+}
+
+.CenterButton {
+  margin: auto;
+  text-align: center;
+}
+
+.Center {
+  text-align: center;
+}
+
+.ButtonRow {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.Expand {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  color: gray;
+  font-weight: normal;
+}
+
+.CarList {
+  margin-left: 2vh;
+  margin-right: 2vh;
+}
+
+.CarListName {
+  padding: 10px;
+}
+
+.CarListInfo {
+  text-align: center;
+}
+
+.CarListItem {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid black;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.DetailsContent {
+  margin-top: 3vh;
+}
+
+.FaultReportPart {
+  padding: 20px;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-left: 1vh;
+  margin-right: 1vh;
+  margin-bottom: 1vh;
+}
+
+img {
+  width: 100%;
+}
