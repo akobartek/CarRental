@@ -23,8 +23,8 @@
 
 .CarDetails-body {
   background-color: #fff;
-  margin-left: 7vh;
-  margin-right: 7vh;
+  margin-left: 5vh;
+  margin-right: 5vh;
   margin-top: 5vh;
   margin-bottom: 5vh;
   color: #000;
@@ -133,4 +133,16 @@
 
 img {
   width: 100%;
+}
+
+.Icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+}
+
+.IconDesc {
+  font-size: 20px;
+  display: inline-block;
+  margin-top: 24px;
 }

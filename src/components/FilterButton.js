@@ -1,33 +1,35 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
 class FilterButton extends React.Component {
   render() {
     const {
-      startDate,
-      endDate,
-      startCity,
-      endCity,
+      dateFrom,
+      dateTo,
+      locationIdFrom,
+      locationIdTo,
       carType,
       passengers,
       gearbox
     } = this.props.state;
 
     return (
-      <Redirect
-        to={
-          `/search?startDate=${startDate.toISOString().substring(0, 10)}` +
-          `&endDate=${endDate.toISOString().substring(0, 10)}` +
-          `&startCity=${startCity}` +
-          `${endCity ? `&endCity=${endCity}` : ``}` +
-          `${carType ? `&carType=${carType}` : ``}` +
-          `${passengers ? `&passengers=${passengers}` : ``}` +
-          `${gearbox ? `&gearbox=${gearbox}` : ``}`
-        }
-      >
-        <Button variant="primary">Szukaj</Button>
-      </Redirect>
+      <div>
+        <Link
+          to={
+            `/search?dateFrom=${dateFrom.toISOString().substring(0, 10)}` +
+            `&dateTo=${dateTo.toISOString().substring(0, 10)}` +
+            `&locationIdFrom=${locationIdFrom}` +
+            `${locationIdTo ? `&locationIdTo=${locationIdTo}` : ``}` +
+            `${carType ? `&carType=${carType}` : ``}` +
+            `${passengers ? `&passengers=${passengers}` : ``}` +
+            `${gearbox ? `&gearbox=${gearbox}` : ``}`
+          }
+        >
+          <Button variant="secondary">Filtruj xd</Button>
+        </Link>
+      </div>
     );
   }
 }

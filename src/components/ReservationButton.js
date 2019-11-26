@@ -4,17 +4,27 @@ import { Button } from "react-bootstrap";
 
 class ReservationButton extends React.Component {
   render() {
-    const { carId, startDate, endDate, startCity, endCity } = this.props;
+    const {
+      selectedCar,
+      dateFrom,
+      dateTo,
+      locationIdFrom,
+      locationIdTo
+    } = this.props;
 
     return (
       <Link
-        to={
-          `/reservation?carId=${carId}` +
-          `&startDate=${startDate.toISOString().substring(0, 10)}` +
-          `&endDate=${endDate.toISOString().substring(0, 10)}` +
-          `&startCity=${startCity}` +
-          `&endCity=${endCity}`
-        }
+        to={{
+          pathname: "/reservation",
+          search:
+            `?dateFrom=${dateFrom.toISOString().substring(0, 10)}` +
+            `&dateTo=${dateTo.toISOString().substring(0, 10)}` +
+            `&locationIdFrom=${locationIdFrom}` +
+            `&locationIdTo=${locationIdTo}`,
+          state: {
+            selectedCar: selectedCar
+          }
+        }}
       >
         <Button variant="light">Rezerwuj</Button>
       </Link>

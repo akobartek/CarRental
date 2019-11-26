@@ -8,11 +8,11 @@ class ReservationSummary extends React.Component {
     const values = window.location.href.split("?")[1].split("&");
     this.state = {
       showModal: false,
-      carId: values[0].split("=")[1],
-      startDate: values[1].split("=")[1],
-      endDate: values[2].split("=")[1],
-      startCity: values[3].split("=")[1],
-      endCity: values[4].split("=")[1]
+      selectedCar: props.location.state.selectedCar,
+      dateFrom: values[0].split("=")[1],
+      dateTo: values[1].split("=")[1],
+      locationIdFrom: values[2].split("=")[1],
+      locationIdTo: values[3].split("=")[1]
     };
   }
 
@@ -24,9 +24,11 @@ class ReservationSummary extends React.Component {
   };
 
   render() {
+    const { selectedCar } = this.state;
+
     const days =
-      (new Date(this.state.endDate).getTime() -
-        new Date(this.state.startDate).getTime()) /
+      (new Date(this.state.dateTo).getTime() -
+        new Date(this.state.dateFrom).getTime()) /
         (1000 * 3600 * 24) +
       1;
     return (
@@ -40,28 +42,31 @@ class ReservationSummary extends React.Component {
           <Row className="Row DetailsContent">
             <Col sm={5}>
               <img
-                src="https://purepng.com/public/uploads/large/purepng.com-red-porsche-911-gt3-rs-4-carcarvehicletransportporsche-961524661235vbivb.png"
-                alt="xD"
+                src={`https://car-rental-images.herokuapp.com/cars/${selectedCar.image}`}
+                alt={selectedCar.model}
               />
             </Col>
             <Col sm={7}>
               <Row className="Row Center">
                 <Col sm={12}>
-                  <h1>Porsche 911</h1>
+                  <h1>
+                    {selectedCar.brand} {selectedCar.model}
+                  </h1>
                 </Col>
               </Row>
               <Row className="Row Center">
                 <Col sm={12}>
                   <h5>
-                    Miejsce odbioru: {this.state.startCity},{" "}
-                    {this.state.startDate}
+                    Miejsce odbioru: {this.state.locationIdFrom},{" "}
+                    {this.state.dateFrom}
                   </h5>
                 </Col>
               </Row>
               <Row className="Row Center">
                 <Col sm={12}>
                   <h5>
-                    Miejsce zwrotu: {this.state.endCity}, {this.state.endDate}
+                    Miejsce zwrotu: {this.state.locationIdTo},{" "}
+                    {this.state.dateTo}
                   </h5>
                 </Col>
               </Row>

@@ -5,10 +5,10 @@ import { Button } from "react-bootstrap";
 class SearchResult extends React.Component {
   render() {
     const {
-      startDate,
-      endDate,
-      startCity,
-      endCity,
+      dateFrom,
+      dateTo,
+      locationIdFrom,
+      locationIdTo,
       carType,
       passengers,
       gearbox
@@ -17,10 +17,10 @@ class SearchResult extends React.Component {
     return (
       <Link
         to={
-          `/search?startDate=${startDate.toISOString().substring(0, 10)}` +
-          `&endDate=${endDate.toISOString().substring(0, 10)}` +
-          `&startCity=${startCity}` +
-          `${endCity ? `&endCity=${endCity}` : ``}` +
+          `/search?dateFrom=${dateFrom.toISOString().substring(0, 10)}` +
+          `&dateTo=${dateTo.toISOString().substring(0, 10)}` +
+          `&locationIdFrom=${locationIdFrom}` +
+          `${locationIdTo ? `&locationIdTo=${locationIdTo}` : ``}` +
           `${carType ? `&carType=${carType}` : ``}` +
           `${passengers ? `&passengers=${passengers}` : ``}` +
           `${gearbox ? `&gearbox=${gearbox}` : ``}`

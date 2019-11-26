@@ -8,12 +8,12 @@ import SearchButton from "./SearchButton";
 class Main extends React.Component {
   state = {
     isViewExpanded: false,
-    startDate: new Date(),
-    endDate: new Date(Date.now() + 3600 * 1000 * 24),
+    dateFrom: new Date(),
+    dateTo: new Date(Date.now() + 3600 * 1000 * 24),
     minDate: new Date(Date.now() + 3600 * 1000 * 24),
     maxDate: new Date(Date.now() + 14 * 3600 * 1000 * 24),
-    startCity: "Wroclaw",
-    endCity: null,
+    locationIdFrom: "6",
+    locationIdTo: null,
     carType: null,
     passengers: null,
     gearbox: null
@@ -23,31 +23,31 @@ class Main extends React.Component {
     this.state.minDate.setDate(date.getDate() + 1);
     this.state.maxDate.setDate(date.getDate() + 14);
 
-    if (date >= this.state.endDate)
-      this.state.endDate.setDate(date.getDate() + 1);
-    if (this.state.endDate > this.state.maxDate)
-      this.state.endDate.setDate(this.state.maxDate.getDate());
+    if (date >= this.state.dateTo)
+      this.state.dateTo.setDate(date.getDate() + 1);
+    if (this.state.dateTo > this.state.maxDate)
+      this.state.dateTo.setDate(this.state.maxDate.getDate());
 
     this.setState({
-      startDate: date
+      dateFrom: date
     });
   };
 
   setEndDate = date => {
     this.setState({
-      endDate: date
+      dateTo: date
     });
   };
 
   onStartCityChange = e => {
     this.setState({
-      startCity: e.target.options[e.target.selectedIndex].value
+      locationIdFrom: e.target.options[e.target.selectedIndex].value
     });
   };
 
   onEndCityChange = e => {
     this.setState({
-      endCity: e.target.options[e.target.selectedIndex].value
+      locationIdTo: e.target.options[e.target.selectedIndex].value
     });
   };
 
@@ -86,7 +86,7 @@ class Main extends React.Component {
             <Col sm={4}>Od kiedy:</Col>
             <Col sm={8}>
               <DatePicker
-                selected={this.state.startDate}
+                selected={this.state.dateFrom}
                 onChange={date => this.setStartDate(date)}
                 minDate={new Date()}
                 dateFormat="dd-MM-yyyy"
@@ -97,7 +97,7 @@ class Main extends React.Component {
             <Col sm={4}>Do kiedy:</Col>
             <Col sm={8}>
               <DatePicker
-                selected={this.state.endDate}
+                selected={this.state.dateTo}
                 onChange={date => this.setEndDate(date)}
                 minDate={this.state.minDate}
                 maxDate={this.state.maxDate}
@@ -109,11 +109,13 @@ class Main extends React.Component {
             <Col sm={4}>Skąd:</Col>
             <Col sm={8}>
               <Form.Control as="select" onChange={this.onStartCityChange}>
-                <option value="Wroclaw">Wrocław</option>
-                <option value="JeleniaGora">Jelenia Góra</option>
-                <option value="Glogow">Głogów</option>
-                <option value="Legnica">Legnica</option>
-                <option value="Walbrzych">Wałbrzych</option>
+                <option value="6">Wrocław, Bardzka 54/76</option>
+                <option value="7">Wrocław, Graniczna 32/87</option>
+                <option value="5">Wrocław, Krzywoustego 23/16</option>
+                <option value="2">Kłodzko, Szafowa 15/3</option>
+                <option value="3">Legnica, Potockiego 10/15</option>
+                <option value="4">Lubin, Parkowa 75/1</option>
+                <option value="1">Wałbrzych, Górska 2/1</option>
               </Form.Control>
             </Col>
           </Row>
@@ -138,11 +140,13 @@ class Main extends React.Component {
                 <Col sm={4}>Dokąd:</Col>
                 <Col sm={8}>
                   <Form.Control as="select" onChange={this.onEndCityChange}>
-                    <option value="Wroclaw">Wrocław</option>
-                    <option value="JeleniaGora">Jelenia Góra</option>
-                    <option value="Glogow">Głogów</option>
-                    <option value="Legnica">Legnica</option>
-                    <option value="Walbrzych">Wałbrzych</option>
+                    <option value="6">Wrocław, Bardzka 54/76</option>
+                    <option value="7">Wrocław, Graniczna 32/87</option>
+                    <option value="5">Wrocław, Krzywoustego 23/16</option>
+                    <option value="2">Kłodzko, Szafowa 15/3</option>
+                    <option value="3">Legnica, Potockiego 10/15</option>
+                    <option value="4">Lubin, Parkowa 75/1</option>
+                    <option value="1">Wałbrzych, Górska 2/1</option>
                   </Form.Control>
                 </Col>
               </Row>
@@ -177,7 +181,6 @@ class Main extends React.Component {
                 <Col sm={8}>
                   <Form.Control as="select" onChange={this.onGearboxTypeChange}>
                     <option value="manual">Manualna</option>
-                    <option value="semiautomatic">Półautomatyczna</option>
                     <option value="automatic">Automatyczna</option>
                   </Form.Control>
                 </Col>

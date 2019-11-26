@@ -1,7 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../Main.css";
-import { Container, Form, Row, Col, Button, Collapse } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Row,
+  Col,
+  Button,
+  Collapse,
+  Spinner,
+  Modal
+} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import FilterButton from "./FilterButton";
@@ -11,8 +20,9 @@ class SearchResult extends React.Component {
     super(props);
 
     const values = window.location.href.split("?")[1].split("&");
-    const startDate = new Date(values[0].split("=")[1]);
-    const endCity = values[values.findIndex(it => it.includes("endCity"))];
+    const dateFrom = new Date(values[0].split("=")[1]);
+    const locationIdTo =
+      values[values.findIndex(it => it.includes("locationIdTo"))];
     const carType = values[values.findIndex(it => it.includes("carType"))];
     const passengers =
       values[values.findIndex(it => it.includes("passengers"))];
@@ -20,52 +30,20 @@ class SearchResult extends React.Component {
 
     this.state = {
       isViewExpanded: false,
-      startDate: startDate,
-      endDate: new Date(values[1].split("=")[1]),
-      minDate: new Date(startDate + 3600 * 1000 * 24),
-      maxDate: new Date(startDate + 14 * 3600 * 1000 * 24),
-      startCity: values[2].split("=")[1],
-      endCity: endCity === undefined ? undefined : endCity.split("=")[1],
+      dateFrom: dateFrom,
+      dateTo: new Date(values[1].split("=")[1]),
+      minDate: new Date(dateFrom + 3600 * 1000 * 24),
+      maxDate: new Date(dateFrom + 14 * 3600 * 1000 * 24),
+      locationIdFrom: values[2].split("=")[1],
+      locationIdTo:
+        locationIdTo === undefined ? undefined : locationIdTo.split("=")[1],
       carType: carType === undefined ? undefined : carType.split("=")[1],
       passengers:
         passengers === undefined ? undefined : passengers.split("=")[1],
       gearbox: gearbox === undefined ? undefined : gearbox.split("=")[1],
-      results: [
-        {
-          id: "2137xD",
-          name: "Opel Astra",
-          photoUrl:
-            "https://fudeksrentacar.rs/assets/site/images/cars/Opel-Astra-H.png_1488550268",
-          price: 911
-        },
-        {
-          id: "2137xDDD",
-          name: "Seat Ateca",
-          photoUrl:
-            "https://www.wilsonsofrathkenny.co.uk/newmodels/cupra-exterior-car-color-rodium-grey.png",
-          price: 911
-        },
-        {
-          id: "2137xDDDDD",
-          name: "BMW X4",
-          photoUrl:
-            "https://c4d709dd302a2586107d-f8305d22c3db1fdd6f8607b49e47a10c.ssl.cf1.rackcdn.com/thumbnails/stock-images/3d52fb08327bc7c26529b3f46909a97b.png",
-          price: 911
-        },
-        {
-          id: "2138xD",
-          name: "Porsche 911",
-          photoUrl:
-            "https://purepng.com/public/uploads/large/purepng.com-red-porsche-911-gt3-rs-4-carcarvehicletransportporsche-961524661235vbivb.png",
-          price: 911
-        },
-        {
-          id: "2138xDDD",
-          name: "VW Passat",
-          photoUrl: "http://valdiexpress.pl/files/passat1.png",
-          price: 911
-        }
-      ]
+      results: [],
+      resultsFetched: false,
+      filtersUpdated: false
     };
   }
 
@@ -73,82 +51,94 @@ class SearchResult extends React.Component {
     this.state.minDate.setDate(date.getDate() + 1);
     this.state.maxDate.setDate(date.getDate() + 14);
 
-    if (date >= this.state.endDate)
-      this.state.endDate.setDate(date.getDate() + 1);
-    if (this.state.endDate > this.state.maxDate)
-      this.state.endDate.setDate(this.state.maxDate.getDate());
+    if (date >= this.state.dateTo)
+      this.state.dateTo.setDate(date.getDate() + 1);
+    if (this.state.dateTo > this.state.maxDate)
+      this.state.dateTo.setDate(this.state.maxDate.getDate());
 
     this.setState({
-      startDate: date
+      dateFrom: date,
+      filtersUpdated: true
     });
   };
 
   setEndDate = date => {
     this.setState({
-      endDate: date
+      dateTo: date,
+      filtersUpdated: true
     });
   };
 
   onStartCityChange = e => {
     this.setState({
-      startCity: e.target.options[e.target.selectedIndex].value
+      locationIdFrom: e.target.options[e.target.selectedIndex].value,
+      filtersUpdated: true
     });
   };
 
   onEndCityChange = e => {
     this.setState({
-      endCity: e.target.options[e.target.selectedIndex].value
+      locationIdTo: e.target.options[e.target.selectedIndex].value,
+      filtersUpdated: true
     });
   };
 
   onCarTypeChange = e => {
     this.setState({
-      carType: e.target.options[e.target.selectedIndex].value
+      carType: e.target.options[e.target.selectedIndex].value,
+      filtersUpdated: true
     });
   };
 
   onPassengerNumberChange = e => {
     this.setState({
-      passengers: e.target.options[e.target.selectedIndex].value
+      passengers: e.target.options[e.target.selectedIndex].value,
+      filtersUpdated: true
     });
   };
 
   onGearboxTypeChange = e => {
     this.setState({
-      gearbox: e.target.options[e.target.selectedIndex].value
+      gearbox: e.target.options[e.target.selectedIndex].value,
+      filtersUpdated: true
     });
   };
 
   onCollapseChange = () => {
-    this.setState({
-      isViewExpanded: !this.state.isViewExpanded
-    });
+    if (this.state.filtersUpdated) window.location.reload();
+    else
+      this.setState({
+        isViewExpanded: !this.state.isViewExpanded
+      });
   };
 
-  // componentWillMount() {
-  // var promise = this.getResults();
-  // promise.then(
-  //   result => {
-  //     this.setState({ results: result.results });
-  //   },
-  //   function(error) {
-  //     console.log(error);
-  //   }
-  // );
-  // }
+  componentDidMount() {
+    this.getResults();
+  }
 
-  // async getResults() {
-  // const response = await fetch(this.popularMoviesUrl, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json"
-  //   }
-  // });
-  // const myJson = await response.json(); //extract JSON from the http response
-  // console.log(myJson);
-  // // do something with myJson
-  // return myJson;
-  // }
+  getResults() {
+    const changeState = results => {
+      this.setState({ results: results, resultsFetched: true });
+    };
+    const request = new XMLHttpRequest();
+    request.open(
+      "GET",
+      `https://wypozyczalnia-aut.herokuapp.com/api/carinstances?${
+        window.location.href.split("?")[1]
+      }`,
+      true
+    );
+    request.setRequestHeader("Content-Type", "application/json");
+    request.onload = function() {
+      let data = JSON.parse(this.response);
+      if (request.status === 200) {
+        changeState(data.map(obj => obj.car));
+      } else {
+        alert(data);
+      }
+    };
+    request.send();
+  }
 
   render() {
     const resultListJsx = [];
@@ -157,34 +147,58 @@ class SearchResult extends React.Component {
       resultListJsx.push(
         <Col sm={5} key={i} className="CarListItem">
           <Link
-            to={
-              `/car?carId=${result.id}` +
-              `&startDate=${this.state.startDate
-                .toISOString()
-                .substring(0, 10)}` +
-              `&endDate=${this.state.endDate.toISOString().substring(0, 10)}` +
-              `&startCity=${this.state.startCity}`
-            }
+            to={{
+              pathname: "/car",
+              search:
+                `?dateFrom=${this.state.dateFrom
+                  .toISOString()
+                  .substring(0, 10)}` +
+                `&dateTo=${this.state.dateTo.toISOString().substring(0, 10)}` +
+                `&locationIdFrom=${this.state.locationIdFrom}`,
+              state: { selectedCar: result }
+            }}
           >
-            <Row className="RowMust CarListName">
+            <Row>
               <Col sm={12}>
-                <h4>{result.name}</h4>
-              </Col>
-            </Row>
-            <Row className="Row CarListInfo d-flex align-items-center">
-              <Col sm={7}>
-                <img src={result.photoUrl} alt={result.name} />
-              </Col>
-              <Col sm={5}>
-                <h5>
-                  Cena od:
-                  <br />
-                  {result.price} zł/dzień
-                </h5>
+                <Row className="RowMust CarListName">
+                  <Col sm={12}>
+                    <h4>
+                      {result.brand} {result.model}
+                    </h4>
+                  </Col>
+                </Row>
+                <Row className="Row CarListInfo d-flex align-items-center">
+                  <Col sm={7}>
+                    <img
+                      src={`https://car-rental-images.herokuapp.com/cars/${result.image}`}
+                      alt={result.model}
+                    />
+                  </Col>
+                  <Col sm={5}>
+                    <h5>
+                      Cena od:
+                      <br />
+                      {result.normalCost} zł/dzień
+                    </h5>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Link>
         </Col>
+      );
+    }
+
+    if (!this.state.resultsFetched) {
+      return (
+        <Modal.Dialog size="sm">
+          <Modal.Body className="Center">
+            <Spinner animation="border" role="status">
+              <span className="sr-only Center">Ładowanie...</span>
+            </Spinner>
+            <h4 className="Center">Ładowanie...</h4>
+          </Modal.Body>
+        </Modal.Dialog>
       );
     }
 
@@ -199,7 +213,7 @@ class SearchResult extends React.Component {
                     <Col sm={3} className="ColumnMust">
                       Od kiedy:
                       <DatePicker
-                        selected={this.state.startDate}
+                        selected={this.state.dateFrom}
                         onChange={date => this.setStartDate(date)}
                         minDate={new Date()}
                         dateFormat="dd-MM-yyyy"
@@ -208,7 +222,7 @@ class SearchResult extends React.Component {
                     <Col sm={3} className="ColumnMust">
                       Do kiedy:
                       <DatePicker
-                        selected={this.state.endDate}
+                        selected={this.state.dateTo}
                         onChange={date => this.setEndDate(date)}
                         minDate={this.state.minDate}
                         maxDate={this.state.maxDate}
@@ -219,32 +233,36 @@ class SearchResult extends React.Component {
                       Skąd:
                       <Form.Control
                         as="select"
-                        value={this.state.startCity}
+                        value={this.state.locationIdFrom}
                         onChange={this.onStartCityChange}
                       >
-                        <option value="Wroclaw">Wrocław</option>
-                        <option value="JeleniaGora">Jelenia Góra</option>
-                        <option value="Glogow">Głogów</option>
-                        <option value="Legnica">Legnica</option>
-                        <option value="Walbrzych">Wałbrzych</option>
-                      </Form.Control>
-                    </Col>
-                    <Col sm={3} className="Column">
-                      Dokąd:
-                      <Form.Control
-                        as="select"
-                        value={this.state.endCity}
-                        onChange={this.onEndCityChange}
-                      >
-                        <option value="Wroclaw">Wrocław</option>
-                        <option value="JeleniaGora">Jelenia Góra</option>
-                        <option value="Glogow">Głogów</option>
-                        <option value="Legnica">Legnica</option>
-                        <option value="Walbrzych">Wałbrzych</option>
+                        <option value="6">Wrocław, Bardzka 54/76</option>
+                        <option value="7">Wrocław, Graniczna 32/87</option>
+                        <option value="5">Wrocław, Krzywoustego 23/16</option>
+                        <option value="2">Kłodzko, Szafowa 15/3</option>
+                        <option value="3">Legnica, Potockiego 10/15</option>
+                        <option value="4">Lubin, Parkowa 75/1</option>
+                        <option value="1">Wałbrzych, Górska 2/1</option>
                       </Form.Control>
                     </Col>
                   </Row>
                   <Row className="Row">
+                    <Col sm={3} className="Column">
+                      Dokąd:
+                      <Form.Control
+                        as="select"
+                        value={this.state.locationIdTo}
+                        onChange={this.onEndCityChange}
+                      >
+                        <option value="6">Wrocław, Bardzka 54/76</option>
+                        <option value="7">Wrocław, Graniczna 32/87</option>
+                        <option value="5">Wrocław, Krzywoustego 23/16</option>
+                        <option value="2">Kłodzko, Szafowa 15/3</option>
+                        <option value="3">Legnica, Potockiego 10/15</option>
+                        <option value="4">Lubin, Parkowa 75/1</option>
+                        <option value="1">Wałbrzych, Górska 2/1</option>
+                      </Form.Control>
+                    </Col>
                     <Col sm={3} className="Column">
                       Typ samochodu:
                       <Form.Control
@@ -280,21 +298,25 @@ class SearchResult extends React.Component {
                         onChange={this.onGearboxTypeChange}
                       >
                         <option value="manual">Manualna</option>
-                        <option value="semiautomatic">Półautomatyczna</option>
                         <option value="automatic">Automatyczna</option>
                       </Form.Control>
-                    </Col>
-                    <Col sm={3} className="CenterButton">
-                      <FilterButton state={this.state} />
                     </Col>
                   </Row>
                 </div>
               </Collapse>
               <Row>
                 <Col sm={12} className="CenterButton">
-                  <Button variant="secondary" onClick={this.onCollapseChange}>
-                    Filtruj
-                  </Button>
+                  {!this.state.filtersUpdated && (
+                    <Button variant="secondary" onClick={this.onCollapseChange}>
+                      Filtruj
+                    </Button>
+                  )}
+                  {this.state.filtersUpdated && (
+                    <FilterButton
+                      state={this.state}
+                      onClick={this.onCollapseChange}
+                    />
+                  )}
                 </Col>
               </Row>
             </Container>
