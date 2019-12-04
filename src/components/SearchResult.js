@@ -123,7 +123,7 @@ class SearchResult extends React.Component {
     const request = new XMLHttpRequest();
     request.open(
       "GET",
-      `https://wypozyczalnia-aut.herokuapp.com/api/carinstances?${
+      `http://localhost:8080/api/carinstances?${
         window.location.href.split("?")[1]
       }`,
       true

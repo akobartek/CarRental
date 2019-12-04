@@ -7,6 +7,11 @@ import "../AppHeader.css";
 // TODO() -> Logged in user = different layout
 
 class AppHeader extends Component {
+  signOut = () => {
+    localStorage.setItem("token", "");
+    this.props.signOut();
+  };
+
   render() {
     return (
       <header>
@@ -19,18 +24,27 @@ class AppHeader extends Component {
             id="responsive-navbar-nav"
             className="justify-content-end"
           >
-            {/* <Nav>
-              LOGOWANIE
-            </Nav> */}
             <Nav>
-              <Nav.Link>
-                {/* <Link to="/rentals"> */}
-                Wypożyczenia
-                {/* </Link> */}
-              </Nav.Link>
-              <Link className="nav-link" to="/report">
-                Zgłoś usterkę
-              </Link>
+              {this.props.isUserSignedIn && (
+                <Nav.Link>
+                  {/* <Link to="/rentals"> */}
+                  Wypożyczenia
+                  {/* </Link> */}
+                </Nav.Link>
+              )}
+              {this.props.isUserSignedIn && (
+                <Link className="nav-link" to="/report">
+                  Zgłoś usterkę
+                </Link>
+              )}
+              {this.props.isUserSignedIn && (
+                <Nav.Link onClick={this.signOut}>Wyloguj</Nav.Link>
+              )}
+              {!this.props.isUserSignedIn && (
+                <Link className="nav-link" to="/signin">
+                  Logowanie
+                </Link>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Navbar>

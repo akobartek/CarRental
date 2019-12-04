@@ -27,7 +27,7 @@ class FilterButton extends React.Component {
             `${gearbox ? `&gearbox=${gearbox}` : ``}`
           }
         >
-          <Button variant="secondary">Filtruj xd</Button>
+          <Button variant="secondary">Filtruj</Button>
         </Link>
       </div>
     );

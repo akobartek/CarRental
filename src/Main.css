@@ -40,6 +40,18 @@
   color: #000;
 }
 
+.SignIn-body {
+  background-color: #fff;
+  margin: 10vh auto;
+  font-size: 18px;
+  color: #000;
+  max-width: 400px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
 .SearchForm {
   padding: 10px;
   border: 1px solid black;
@@ -145,4 +157,17 @@ img {
   font-size: 20px;
   display: inline-block;
   margin-top: 24px;
+}
+
+input.error {
+  border-color: red;
+}
+
+.input-feedback {
+  color: rgb(235, 54, 54);
+  font-size: 16px;
+}
+
+.SignInPart {
+  margin-top: 20px;
 }
