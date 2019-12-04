@@ -18,9 +18,23 @@ class SignInPage extends React.Component {
 
   render() {
     const { signIn, history } = this.props;
+    const showModal = this.handleShowModal;
 
     return (
       <div className="SignIn-body">
+        <Modal show={this.state.showModal}>
+          <Modal.Header>
+            <Modal.Title>Logowanie nieudane</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Wpisano niepoprawny login lub hasło, spróbuj ponownie!
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={this.handleCloseModal}>
+              Ok
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <Container>
           <Row className="Row">
             <Col sm={12}>
@@ -39,10 +53,11 @@ class SignInPage extends React.Component {
                         signIn();
                         history.goBack();
                       } else {
-                        // SHOW MODAL SIGN IN FAILED
+                        showModal();
+                        setSubmitting(false);
                       }
                     } else {
-                      alert(data);
+                      showModal();
                       setSubmitting(false);
                     }
                   };
