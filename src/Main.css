@@ -7,7 +7,7 @@
   margin: auto;
   margin-top: 5vh;
   margin-bottom: 5vh;
-  width: 40vh;
+  width: 50vh;
   padding: 10px;
   border: 1px solid black;
   border-radius: 5px;
@@ -23,8 +23,8 @@
 
 .CarDetails-body {
   background-color: #fff;
-  margin-left: 5vh;
-  margin-right: 5vh;
+  margin-left: 2vh;
+  margin-right: 2vh;
   margin-top: 5vh;
   margin-bottom: 5vh;
   color: #000;
@@ -36,6 +36,16 @@
   margin-right: 2vh;
   margin-top: 5vh;
   margin-bottom: 5vh;
+  font-size: 18px;
+  color: #000;
+}
+
+.Rentals-body {
+  background-color: #fff;
+  margin-left: 2vh;
+  margin-right: 2vh;
+  margin-top: 4vh;
+  margin-bottom: 4vh;
   font-size: 18px;
   color: #000;
 }
@@ -130,6 +140,15 @@
   border-radius: 5px;
 }
 
+.RentalListItem {
+  margin: 10px;
+  width: 100%;
+  min-height: 20vh;
+  padding: 20px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
 .DetailsContent {
   margin-top: 3vh;
 }
@@ -170,4 +189,20 @@ input.error {
 
 .SignInPart {
   margin-top: 20px;
+}
+
+.ColumnWhole {
+  height: 100%;
+}
+
+.RowEnd {
+  text-align: end;
+}
+
+.DatePicker {
+  width: 100%;
+}
+
+.react-datepicker-wrapper {
+  display: block;
 }

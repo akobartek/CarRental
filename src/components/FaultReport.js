@@ -312,25 +312,16 @@ class FaultReport extends React.Component {
                   />
                 </Col>
               </Row>
-              {this.state.files.length > 0 && (
-                <Row>
-                  <Col>Opis</Col>
-                </Row>
-              )}
-              {this.state.files.length > 0 && (
-                <Row>
-                  <Col>
-                    <Form.Control as="textarea" rows="3" id="TextArea3" />
-                  </Col>
-                </Row>
-              )}
             </Col>
           </Row>
           <Row className="Row">
             <Col sm={4}></Col>
             <Col sm={4} className="d-flex justify-content-around">
               <CancelReportButton />
-              <SendReportButton state={this.state} />
+              <SendReportButton
+                state={this.state}
+                rentalId={this.props.match.params.rentalId}
+              />
             </Col>
             <Col sm={4}></Col>
           </Row>

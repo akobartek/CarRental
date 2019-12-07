@@ -8,7 +8,7 @@ class SearchResult extends React.Component {
       dateFrom,
       dateTo,
       locationIdFrom,
-      locationIdTo,
+      horsePower,
       carType,
       passengers,
       gearbox
@@ -20,10 +20,11 @@ class SearchResult extends React.Component {
           `/search?dateFrom=${dateFrom.toISOString().substring(0, 10)}` +
           `&dateTo=${dateTo.toISOString().substring(0, 10)}` +
           `&locationIdFrom=${locationIdFrom}` +
-          `${locationIdTo ? `&locationIdTo=${locationIdTo}` : ``}` +
-          `${carType ? `&carType=${carType}` : ``}` +
-          `${passengers ? `&passengers=${passengers}` : ``}` +
-          `${gearbox ? `&gearbox=${gearbox}` : ``}`
+          `${carType !== "" ? `&carType=${carType}` : ``}` +
+          `${passengers !== "" ? `&passengers=${passengers}` : ``}` +
+          `${gearbox !== "" ? `&gearbox=${gearbox}` : ``}` +
+          `${horsePower.min !== 0 ? `&horsePowerFrom=${horsePower.min}` : ``}` +
+          `${horsePower.max !== 500 ? `&horsePowerTo=${horsePower.max}` : ``}`
         }
       >
         <Button variant="primary">Szukaj</Button>

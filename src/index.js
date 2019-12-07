@@ -6,7 +6,10 @@ import Main from "./components/Main";
 import SearchResult from "./components/SearchResult";
 import CarDetails from "./components/CarDetails";
 import ReservationSummary from "./components/ReservationSummary";
+import FaultList from "./components/FaultList";
 import FaultReport from "./components/FaultReport";
+import MyRentals from "./components/MyRentals";
+import ReportsList from "./components/ReportsList";
 import SignInPage from "./components/SignInPage";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import pl from "date-fns/locale/pl";
@@ -35,7 +38,10 @@ class App extends React.Component {
           <Route path="/search" component={SearchResult} />
           <Route path="/car" component={CarDetails} />
           <Route path="/reservation" component={ReservationSummary} />
-          <Route path="/report" component={FaultReport} />
+          <Route path="/myrentals" component={MyRentals} />
+          <Route path="/report" exact component={FaultList} />
+          <Route path="/reportForm/:rentalId" component={FaultReport} />
+          <Route path="/getReports/:rentalId" component={ReportsList} />
           <Route
             path="/signin"
             render={props => (

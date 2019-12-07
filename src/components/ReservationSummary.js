@@ -1,5 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Container, Row, Col, Button, Modal } from "react-bootstrap";
+import LoadingModal from "./LoadingModal";
 
 class ReservationSummary extends React.Component {
   constructor(props) {
@@ -12,7 +14,9 @@ class ReservationSummary extends React.Component {
       dateFrom: values[0].split("=")[1],
       dateTo: values[1].split("=")[1],
       locationIdFrom: values[2].split("=")[1],
-      locationIdTo: values[3].split("=")[1]
+      locationIdTo: values[3].split("=")[1],
+      places: [],
+      placesFetched: false
     };
   }
 
@@ -23,8 +27,45 @@ class ReservationSummary extends React.Component {
     this.setState({ showModal: true });
   };
 
+  componentDidMount() {
+    this.getPlaces();
+  }
+
+  getPlaces() {
+    const changeState = places => {
+      this.setState({ places: places, placesFetched: true });
+    };
+    const request = new XMLHttpRequest();
+    request.open("GET", "http://localhost:8080/api/allcarrentalunits", true);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.onload = function() {
+      const data = JSON.parse(this.response);
+      if (request.status === 200) {
+        changeState(data);
+      } else {
+        alert(data);
+      }
+    };
+    request.send();
+  }
+
+  findStartLocation = elem => {
+    return elem.carRentalUnitId === parseInt(this.state.locationIdFrom);
+  };
+
+  findEndLocation = elem => {
+    return elem.carRentalUnitId === parseInt(this.state.locationIdTo);
+  };
+
   render() {
+    if (!this.state.placesFetched) {
+      return <LoadingModal />;
+    }
+
     const { selectedCar } = this.state;
+    const startLocation = this.state.places.find(this.findStartLocation)
+      .address;
+    const endLocation = this.state.places.find(this.findEndLocation).address;
 
     const days =
       (new Date(this.state.dateTo).getTime() -
@@ -57,16 +98,18 @@ class ReservationSummary extends React.Component {
               <Row className="Row Center">
                 <Col sm={12}>
                   <h5>
-                    Miejsce odbioru: {this.state.locationIdFrom},{" "}
-                    {this.state.dateFrom}
+                    Miejsce odbioru:{" "}
+                    {` ${startLocation.city} ${startLocation.street} ${startLocation.buildingNumber}/${startLocation.houseNumber}`}
+                    , {this.state.dateFrom}
                   </h5>
                 </Col>
               </Row>
               <Row className="Row Center">
                 <Col sm={12}>
                   <h5>
-                    Miejsce zwrotu: {this.state.locationIdTo},{" "}
-                    {this.state.dateTo}
+                    Miejsce zwrotu:{" "}
+                    {` ${endLocation.city} ${endLocation.street} ${endLocation.buildingNumber}/${endLocation.houseNumber}`}
+                    , {this.state.dateTo}
                   </h5>
                 </Col>
               </Row>
@@ -88,9 +131,14 @@ class ReservationSummary extends React.Component {
                       <Modal.Title>Zarezerwowano samochód</Modal.Title>
                     </Modal.Header>
                     <Modal.Footer>
-                      <Button variant="primary" onClick={this.handleCloseModal}>
-                        Ok
-                      </Button>
+                      <Link to="/">
+                        <Button
+                          variant="primary"
+                          onClick={this.handleCloseModal}
+                        >
+                          Ok
+                        </Button>
+                      </Link>
                     </Modal.Footer>
                   </Modal>
                 </Col>

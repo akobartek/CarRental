@@ -26,11 +26,9 @@ class AppHeader extends Component {
           >
             <Nav>
               {this.props.isUserSignedIn && (
-                <Nav.Link>
-                  {/* <Link to="/rentals"> */}
+                <Link className="nav-link" to="/myrentals">
                   Wypożyczenia
-                  {/* </Link> */}
-                </Nav.Link>
+                </Link>
               )}
               {this.props.isUserSignedIn && (
                 <Link className="nav-link" to="/report">
@@ -38,7 +36,9 @@ class AppHeader extends Component {
                 </Link>
               )}
               {this.props.isUserSignedIn && (
-                <Nav.Link onClick={this.signOut}>Wyloguj</Nav.Link>
+                <Link className="nav-link" to="/" onClick={this.signOut}>
+                  Wyloguj
+                </Link>
               )}
               {!this.props.isUserSignedIn && (
                 <Link className="nav-link" to="/signin">

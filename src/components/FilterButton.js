@@ -1,34 +1,36 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
 class FilterButton extends React.Component {
-  render() {
+  refreshPage = () => {
     const {
       dateFrom,
       dateTo,
       locationIdFrom,
-      locationIdTo,
+      horsePower,
       carType,
       passengers,
       gearbox
     } = this.props.state;
 
+    window.location.replace(
+      `/search?dateFrom=${dateFrom.toISOString().substring(0, 10)}` +
+        `&dateTo=${dateTo.toISOString().substring(0, 10)}` +
+        `&locationIdFrom=${locationIdFrom}` +
+        `${carType !== "" ? `&carType=${carType}` : ``}` +
+        `${passengers !== "" ? `&passengers=${passengers}` : ``}` +
+        `${gearbox !== "" ? `&gearbox=${gearbox}` : ``}` +
+        `${horsePower.min !== 0 ? `&horsePowerFrom=${horsePower.min}` : ``}` +
+        `${horsePower.max !== 500 ? `&horsePowerTo=${horsePower.max}` : ``}`
+    );
+  };
+
+  render() {
     return (
       <div>
-        <Link
-          to={
-            `/search?dateFrom=${dateFrom.toISOString().substring(0, 10)}` +
-            `&dateTo=${dateTo.toISOString().substring(0, 10)}` +
-            `&locationIdFrom=${locationIdFrom}` +
-            `${locationIdTo ? `&locationIdTo=${locationIdTo}` : ``}` +
-            `${carType ? `&carType=${carType}` : ``}` +
-            `${passengers ? `&passengers=${passengers}` : ``}` +
-            `${gearbox ? `&gearbox=${gearbox}` : ``}`
-          }
-        >
-          <Button variant="secondary">Filtruj</Button>
-        </Link>
+        <Button variant="secondary" onClick={this.refreshPage}>
+          Filtruj
+        </Button>
       </div>
     );
   }

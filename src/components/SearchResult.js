@@ -1,19 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../Main.css";
-import {
-  Container,
-  Form,
-  Row,
-  Col,
-  Button,
-  Collapse,
-  Spinner,
-  Modal
-} from "react-bootstrap";
+import { Container, Form, Row, Col, Button, Collapse } from "react-bootstrap";
 import DatePicker from "react-datepicker";
+import InputRange from "react-input-range";
 import "react-datepicker/dist/react-datepicker.css";
+import "react-input-range/lib/css/index.css";
 import FilterButton from "./FilterButton";
+import LoadingModal from "./LoadingModal";
 
 class SearchResult extends React.Component {
   constructor(props) {
@@ -21,12 +15,12 @@ class SearchResult extends React.Component {
 
     const values = window.location.href.split("?")[1].split("&");
     const dateFrom = new Date(values[0].split("=")[1]);
-    const locationIdTo =
-      values[values.findIndex(it => it.includes("locationIdTo"))];
     const carType = values[values.findIndex(it => it.includes("carType"))];
     const passengers =
       values[values.findIndex(it => it.includes("passengers"))];
     const gearbox = values[values.findIndex(it => it.includes("gearbox"))];
+    const minHP = values[values.findIndex(it => it.includes("horsePowerFrom"))];
+    const maxHP = values[values.findIndex(it => it.includes("horsePowerTo"))];
 
     this.state = {
       isViewExpanded: false,
@@ -35,12 +29,13 @@ class SearchResult extends React.Component {
       minDate: new Date(dateFrom + 3600 * 1000 * 24),
       maxDate: new Date(dateFrom + 14 * 3600 * 1000 * 24),
       locationIdFrom: values[2].split("=")[1],
-      locationIdTo:
-        locationIdTo === undefined ? undefined : locationIdTo.split("=")[1],
-      carType: carType === undefined ? undefined : carType.split("=")[1],
-      passengers:
-        passengers === undefined ? undefined : passengers.split("=")[1],
-      gearbox: gearbox === undefined ? undefined : gearbox.split("=")[1],
+      horsePower: {
+        min: minHP === undefined ? 0 : parseInt(minHP.split("=")[1]),
+        max: maxHP === undefined ? 500 : parseInt(maxHP.split("=")[1])
+      },
+      carType: carType === undefined ? "" : carType.split("=")[1],
+      passengers: passengers === undefined ? "" : passengers.split("=")[1],
+      gearbox: gearbox === undefined ? "" : gearbox.split("=")[1],
       results: [],
       resultsFetched: false,
       filtersUpdated: false
@@ -130,7 +125,7 @@ class SearchResult extends React.Component {
     );
     request.setRequestHeader("Content-Type", "application/json");
     request.onload = function() {
-      let data = JSON.parse(this.response);
+      const data = JSON.parse(this.response);
       if (request.status === 200) {
         changeState(data.map(obj => obj.car));
       } else {
@@ -190,16 +185,7 @@ class SearchResult extends React.Component {
     }
 
     if (!this.state.resultsFetched) {
-      return (
-        <Modal.Dialog size="sm">
-          <Modal.Body className="Center">
-            <Spinner animation="border" role="status">
-              <span className="sr-only Center">Ładowanie...</span>
-            </Spinner>
-            <h4 className="Center">Ładowanie...</h4>
-          </Modal.Body>
-        </Modal.Dialog>
-      );
+      return <LoadingModal />;
     }
 
     return (
@@ -213,6 +199,7 @@ class SearchResult extends React.Component {
                     <Col sm={3} className="ColumnMust">
                       Od kiedy:
                       <DatePicker
+                        className="DatePicker"
                         selected={this.state.dateFrom}
                         onChange={date => this.setStartDate(date)}
                         minDate={new Date()}
@@ -222,6 +209,7 @@ class SearchResult extends React.Component {
                     <Col sm={3} className="ColumnMust">
                       Do kiedy:
                       <DatePicker
+                        className="DatePicker"
                         selected={this.state.dateTo}
                         onChange={date => this.setEndDate(date)}
                         minDate={this.state.minDate}
@@ -248,28 +236,13 @@ class SearchResult extends React.Component {
                   </Row>
                   <Row className="Row">
                     <Col sm={3} className="Column">
-                      Dokąd:
-                      <Form.Control
-                        as="select"
-                        value={this.state.locationIdTo}
-                        onChange={this.onEndCityChange}
-                      >
-                        <option value="6">Wrocław, Bardzka 54/76</option>
-                        <option value="7">Wrocław, Graniczna 32/87</option>
-                        <option value="5">Wrocław, Krzywoustego 23/16</option>
-                        <option value="2">Kłodzko, Szafowa 15/3</option>
-                        <option value="3">Legnica, Potockiego 10/15</option>
-                        <option value="4">Lubin, Parkowa 75/1</option>
-                        <option value="1">Wałbrzych, Górska 2/1</option>
-                      </Form.Control>
-                    </Col>
-                    <Col sm={3} className="Column">
                       Typ samochodu:
                       <Form.Control
                         as="select"
                         value={this.state.carType}
                         onChange={this.onCarTypeChange}
                       >
+                        <option value=""></option>
                         <option value="city">Miejskie</option>
                         <option value="offroad">Terenowe</option>
                         <option value="truck">Dostawcze</option>
@@ -282,12 +255,10 @@ class SearchResult extends React.Component {
                         value={this.state.passengers}
                         onChange={this.onPassengerNumberChange}
                       >
+                        <option value=""></option>
                         <option value="2">2</option>
                         <option value="3">3</option>
-                        <option value="4">4</option>
                         <option value="5">5</option>
-                        <option value="7">7</option>
-                        <option value="9">9</option>
                       </Form.Control>
                     </Col>
                     <Col sm={3} className="Column">
@@ -297,9 +268,22 @@ class SearchResult extends React.Component {
                         value={this.state.gearbox}
                         onChange={this.onGearboxTypeChange}
                       >
+                        <option value=""></option>
                         <option value="manual">Manualna</option>
                         <option value="automatic">Automatyczna</option>
                       </Form.Control>
+                    </Col>
+                    <Col sm={3} className="Column">
+                      <div className="Center" style={{ marginBottom: "15px" }}>
+                        Liczba KM:
+                      </div>
+                      <InputRange
+                        minValue={0}
+                        maxValue={500}
+                        formatLabel={value => `${value} KM`}
+                        value={this.state.horsePower}
+                        onChange={value => this.setState({ horsePower: value })}
+                      />
                     </Col>
                   </Row>
                 </div>

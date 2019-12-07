@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "../Main.css";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Image } from "react-bootstrap";
 import ReservationButton from "./ReservationButton";
+import LoadingModal from "./LoadingModal";
 import passengersIcon from "../images/passenger.svg";
 import powerIcon from "../images/power.svg";
 import gearboxIcon from "../images/gearbox.svg";
@@ -57,22 +58,65 @@ class CarDetails extends Component {
           cityValue: "1",
           price: 195
         }
-      ]
+      ],
+      weather: [],
+      weatherFetched: false,
+      pricesFetched: false,
+      allFetched: false
     };
   }
 
-  render() {
-    const { selectedCar } = this.state;
+  componentDidMount() {
+    this.getWeather();
+  }
 
+  getWeather() {
+    const changeState = weather => {
+      if (this.state.pricesFetched)
+        this.setState({
+          weather: weather,
+          weatherFetched: true,
+          allFetched: true
+        });
+      else
+        this.setState({
+          weather: weather,
+          weatherFetched: true
+        });
+    };
+    const request = new XMLHttpRequest();
+    request.open(
+      "GET",
+      "https://car-rental-weather.herokuapp.com/forecast?city=Wroclaw",
+      true
+    );
+    request.setRequestHeader("Content-Type", "application/json");
+    request.onload = function() {
+      const data = JSON.parse(this.response);
+      if (request.status === 200) {
+        changeState(data.list);
+      } else {
+        alert(data);
+      }
+    };
+    request.send();
+  }
+
+  render() {
+    if (!this.state.allFetched) {
+      return <LoadingModal />;
+    }
+
+    const { selectedCar } = this.state;
     const endCitiesJsx = [];
     for (let i = 0; i < this.state.prices.length; i++) {
       const price = this.state.prices[i];
       endCitiesJsx.push(
         <Col sm={12} key={i}>
           <Row className="Row Center d-flex align-items-center">
-            <Col sm={3} />
-            <Col sm={3}>
-              {price.city}: {price.price} zł
+            <Col sm={1} />
+            <Col sm={7}>
+              {price.city}: {price.price}zł
             </Col>
             <Col sm={2}>
               <ReservationButton
@@ -83,9 +127,65 @@ class CarDetails extends Component {
                 locationIdTo={price.cityValue}
               />
             </Col>
-            <Col sm={4} />
+            <Col sm={2} />
           </Row>
         </Col>
+      );
+    }
+
+    const weatherListJsx = [];
+    let lastDate = "";
+    for (let i = 0; i < this.state.results.length; i++) {
+      const result = this.state.results[i];
+      let isDateChanged = false;
+      if (lastDate !== result.date) {
+        lastDate = result.date;
+        isDateChanged = true;
+      }
+      weatherListJsx.push(
+        <Row>
+          <Col sm={4}>
+            <Row className="RowMust">
+              {isDateChanged ? lastDate.substring(0, 10) : ""}
+            </Row>
+          </Col>
+          <Col sm={4}>
+            {lastDate.contains("T09:00") ? <Row>Rano</Row> : null}
+            {lastDate.contains("T12:00") ? <Row>Południe</Row> : null}
+            {lastDate.contains("T18:00") ? <Row>Wieczór</Row> : null}
+          </Col>
+          <Col sm={2}>
+            {lastDate.contains("T09:00") ? (
+              <Image
+                src={`http://openweathermap.org/img/wn/${result.icon}@2x.png`}
+                alt={result.icon}
+              />
+            ) : null}
+            {lastDate.contains("T12:00") ? (
+              <Image
+                src={`http://openweathermap.org/img/wn/${result.icon}@2x.png`}
+                alt={result.icon}
+              />
+            ) : null}
+            {lastDate.contains("T18:00") ? (
+              <Image
+                src={`http://openweathermap.org/img/wn/${result.icon}@2x.png`}
+                alt={result.icon}
+              />
+            ) : null}
+          </Col>
+          <Col sm={2}>
+            {lastDate.contains("T09:00") ? (
+              <Row>{parseInt(result.temperature)}°C</Row>
+            ) : null}
+            {lastDate.contains("T12:00") ? (
+              <Row>{parseInt(result.temperature)}°C</Row>
+            ) : null}
+            {lastDate.contains("T18:00") ? (
+              <Row>{parseInt(result.temperature)}°C</Row>
+            ) : null}
+          </Col>
+        </Row>
       );
     }
 
@@ -178,11 +278,16 @@ class CarDetails extends Component {
               </Row>
             </Col>
           </Row>
-          <Row className="RowMust Center DetailsContent d-flex justify-content-center">
-            Cena za dobę przy oddaniu samochodu w punkcie:
-          </Row>
-          <Row className="Row PricesList d-flex justify-content-center">
-            {endCitiesJsx}
+          <Row>
+            <Col sm={6}>{weatherListJsx}</Col>
+            <Col sm={6}>
+              <Row className="RowMust Center DetailsContent d-flex justify-content-center">
+                Cena za dobę przy oddaniu samochodu w punkcie:
+              </Row>
+              <Row className="Row PricesList d-flex justify-content-center">
+                {endCitiesJsx}
+              </Row>
+            </Col>
           </Row>
         </Container>
       </div>

@@ -45,10 +45,11 @@ class SignInPage extends React.Component {
                   request.open("POST", "http://localhost:8080/api/login", true);
                   request.setRequestHeader("Content-Type", "application/json");
                   request.onload = function() {
-                    var data = this.response;
+                    const data = JSON.parse(this.response);
                     if (request.status === 200) {
                       if (data !== "") {
-                        localStorage.setItem("token", data);
+                        localStorage.setItem("token", data.key);
+                        localStorage.setItem("role", data.value);
                         setSubmitting(false);
                         signIn();
                         history.goBack();
@@ -61,7 +62,7 @@ class SignInPage extends React.Component {
                       setSubmitting(false);
                     }
                   };
-                  var loginRequest = new LoginRequest(
+                  const loginRequest = new LoginRequest(
                     values.login,
                     values.password
                   );
