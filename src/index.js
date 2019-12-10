@@ -11,6 +11,7 @@ import FaultReport from "./components/FaultReport";
 import MyRentals from "./components/MyRentals";
 import ReportsList from "./components/ReportsList";
 import SignInPage from "./components/SignInPage";
+import AddNewCar from "./components/AddNewCar";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import pl from "date-fns/locale/pl";
 
@@ -42,6 +43,7 @@ class App extends React.Component {
           <Route path="/report" exact component={FaultList} />
           <Route path="/reportForm/:rentalId" component={FaultReport} />
           <Route path="/getReports/:rentalId" component={ReportsList} />
+          <Route path="/addCar" component={AddNewCar} />
           <Route
             path="/signin"
             render={props => (

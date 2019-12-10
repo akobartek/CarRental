@@ -40,7 +40,7 @@ class MyRentals extends React.Component {
       const addressEnd = this.state.rentals[i].carRentalUnitEnd.address;
 
       rentalListJsx.push(
-        <Link key={i} to={`/getReports/${this.state.rentals[0].hireId}`}>
+        <Link key={i} to={`/getReports/${this.state.rentals[i].hireId}`}>
           <Row className="RentalListItem">
             <Col sm={4} className="d-flex align-items-center">
               <Image

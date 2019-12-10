@@ -48,8 +48,8 @@ class SignInPage extends React.Component {
                     const data = JSON.parse(this.response);
                     if (request.status === 200) {
                       if (data !== "") {
-                        localStorage.setItem("token", data.key);
-                        localStorage.setItem("role", data.value);
+                        localStorage.setItem("token", data.first);
+                        localStorage.setItem("role", data.second);
                         setSubmitting(false);
                         signIn();
                         history.goBack();

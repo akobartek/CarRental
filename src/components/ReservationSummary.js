@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import LoadingModal from "./LoadingModal";
+import RentalRequest from "../model/RentalRequest";
 
 class ReservationSummary extends React.Component {
   constructor(props) {
@@ -11,6 +12,7 @@ class ReservationSummary extends React.Component {
     this.state = {
       showModal: false,
       selectedCar: props.location.state.selectedCar,
+      price: props.location.state.price,
       dateFrom: values[0].split("=")[1],
       dateTo: values[1].split("=")[1],
       locationIdFrom: values[2].split("=")[1],
@@ -20,11 +22,39 @@ class ReservationSummary extends React.Component {
     };
   }
 
+  handleShowModal = () => {
+    this.setState({ showModal: true });
+  };
   handleCloseModal = () => {
     this.setState({ showModal: false });
   };
-  handleShowModal = () => {
-    this.setState({ showModal: true });
+
+  sendReservation = () => {
+    const showModal = this.handleShowModal;
+
+    const request = new XMLHttpRequest();
+    request.open("POST", "http://localhost:8080/api/add-rental", true);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.setRequestHeader("tokenObject", localStorage.getItem("token"));
+    request.onload = function() {
+      if (request.status === 200) {
+        showModal();
+      } else {
+        alert("Nie udało się zarezerwować samochodu, spróbuj ponownie!");
+      }
+    };
+
+    // TODO() -> CHANGE CARINSTANCEID
+    const rentalRequest = new RentalRequest(
+      this.state.selectedCar.carInstanceId,
+      localStorage.getItem("token"),
+      this.state.locationIdFrom,
+      this.state.locationIdTo,
+      this.state.dateFrom,
+      this.state.dateTo,
+      this.state.price
+    );
+    request.send(JSON.stringify(rentalRequest));
   };
 
   componentDidMount() {
@@ -62,7 +92,7 @@ class ReservationSummary extends React.Component {
       return <LoadingModal />;
     }
 
-    const { selectedCar } = this.state;
+    const selectedCar = this.state.selectedCar.car;
     const startLocation = this.state.places.find(this.findStartLocation)
       .address;
     const endLocation = this.state.places.find(this.findEndLocation).address;
@@ -116,13 +146,14 @@ class ReservationSummary extends React.Component {
               <Row className="Row Center">
                 <Col sm={12}>
                   <h5>
-                    {days} dni wypożyczenia, do zapłaty: {days * 115} zł
+                    {days} dni wypożyczenia, do zapłaty:{" "}
+                    {days * this.state.price} zł
                   </h5>
                 </Col>
               </Row>
               <Row className="Row CenterButton">
                 <Col sm={12}>
-                  <Button variant="primary" onClick={this.handleShowModal}>
+                  <Button variant="primary" onClick={this.sendReservation}>
                     Zatwierdź
                   </Button>
 

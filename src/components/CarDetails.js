@@ -10,6 +10,12 @@ import airConditioningIcon from "../images/airconditioner.svg";
 import gpsIcon from "../images/gps.svg";
 import icon4x4 from "../images/4x4.svg";
 
+// eslint-disable-next-line no-extend-native
+String.prototype.replaceAll = function(search, replacement) {
+  var target = this;
+  return target.replace(new RegExp(search, "g"), replacement);
+};
+
 class CarDetails extends Component {
   constructor(props) {
     super(props);
@@ -22,43 +28,7 @@ class CarDetails extends Component {
       dateFrom: dateFrom,
       dateTo: new Date(values[1].split("=")[1]),
       locationIdFrom: values[2].split("=")[1],
-      prices: [
-        {
-          city: "Wrocław, Bardzka 54/76",
-          cityValue: "6",
-          price: 105
-        },
-        {
-          city: "Wrocław, Graniczna 32/87",
-          cityValue: "7",
-          price: 115
-        },
-        {
-          city: "Wrocław, Krzywoustego 23/16",
-          cityValue: "5",
-          price: 130
-        },
-        {
-          city: "Kłodzko, Szafowa 15/3",
-          cityValue: "2",
-          price: 110
-        },
-        {
-          city: "Legnica, Potockiego 10/15",
-          cityValue: "3",
-          price: 180
-        },
-        {
-          city: "Lubin, Parkowa 75/1",
-          cityValue: "4",
-          price: 135
-        },
-        {
-          city: "Wałbrzych, Górska 2/1",
-          cityValue: "1",
-          price: 195
-        }
-      ],
+      prices: [],
       weather: [],
       weatherFetched: false,
       pricesFetched: false,
@@ -67,11 +37,82 @@ class CarDetails extends Component {
   }
 
   componentDidMount() {
+    this.getPrices();
     this.getWeather();
+  }
+
+  getPrices() {
+    const changeState = prices => {
+      console.log("Prices fetched");
+      if (this.state.weatherFetched)
+        this.setState({
+          prices: prices,
+          pricesFetched: true,
+          allFetched: true
+        });
+      else
+        this.setState({
+          prices: prices,
+          pricesFetched: true
+        });
+    };
+    const selectedCar = this.state.selectedCar;
+
+    const request = new XMLHttpRequest();
+    request.open(
+      "GET",
+      `http://localhost:8080/api/pricesforsearch?${
+        window.location.href.split("?")[1]
+      }`,
+      true
+    );
+    request.setRequestHeader("Content-Type", "application/json");
+    request.onload = function() {
+      const data = JSON.parse(this.response);
+      if (request.status === 200) {
+        const carRentalObjects = data.find(
+          obj => obj.first.carInstanceId === selectedCar.carInstanceId
+        ).second;
+        changeState(
+          Object.entries(carRentalObjects).map(obj => [
+            JSON.parse(
+              obj[0]
+                .replace("CarRentalUnit", "")
+                .replace("Address", "")
+                .replace("carRentalUnitId", '"carRentalUnitId"')
+                .replace("optimalQuantityCityCars", '"optimalQuantityCityCars"')
+                .replace(
+                  "optimalQuantityOffroadCars",
+                  '"optimalQuantityOffroadCars"'
+                )
+                .replace(
+                  "optimalQuantityDeliveryCars",
+                  '"optimalQuantityDeliveryCars"'
+                )
+                .replace("address", '"address"')
+                .replace("addressId", '"addressId"')
+                .replace("buildingNumber", '"buildingNumber"')
+                .replace("city", '"city"')
+                .replace("country", '"country"')
+                .replace("houseNumber", '"houseNumber"')
+                .replace("street", '"street"')
+                .replaceAll("=", ":")
+                .replaceAll("'", '"')
+            ),
+            obj[1]
+          ])
+        );
+      } else {
+        alert(data);
+      }
+    };
+
+    request.send();
   }
 
   getWeather() {
     const changeState = weather => {
+      console.log("Weather fetched");
       if (this.state.pricesFetched)
         this.setState({
           weather: weather,
@@ -107,7 +148,7 @@ class CarDetails extends Component {
       return <LoadingModal />;
     }
 
-    const { selectedCar } = this.state;
+    const selectedCar = this.state.selectedCar.car;
     const endCitiesJsx = [];
     for (let i = 0; i < this.state.prices.length; i++) {
       const price = this.state.prices[i];
@@ -116,15 +157,17 @@ class CarDetails extends Component {
           <Row className="Row Center d-flex align-items-center">
             <Col sm={1} />
             <Col sm={7}>
-              {price.city}: {price.price}zł
+              {`${price[0].address.city} ${price[0].address.street} ${price[0].address.buildingNumber}/${price[0].address.houseNumber}`}
+              : {price[1].toFixed(2)}zł
             </Col>
             <Col sm={2}>
               <ReservationButton
-                selectedCar={selectedCar}
+                selectedCar={this.state.selectedCar}
                 dateFrom={this.state.dateFrom}
                 dateTo={this.state.dateTo}
                 locationIdFrom={this.state.locationIdFrom}
-                locationIdTo={price.cityValue}
+                locationIdTo={price[0].carRentalUnitId}
+                price={price[1]}
               />
             </Col>
             <Col sm={2} />
@@ -135,58 +178,74 @@ class CarDetails extends Component {
 
     const weatherListJsx = [];
     let lastDate = "";
-    for (let i = 0; i < this.state.results.length; i++) {
-      const result = this.state.results[i];
+    for (let i = 0; i < this.state.weather.length; i++) {
+      const weather = this.state.weather[i];
       let isDateChanged = false;
-      if (lastDate !== result.date) {
-        lastDate = result.date;
-        isDateChanged = true;
+
+      if (
+        weather.date.includes("T09:00") ||
+        weather.date.includes("T12:00") ||
+        weather.date.includes("T18:00")
+      ) {
+        if (lastDate !== weather.date.substring(0, 10)) {
+          lastDate = weather.date.substring(0, 10);
+          isDateChanged = true;
+        }
+
+        weatherListJsx.push(
+          <Row key={`weather${i}`}>
+            <Col xs={1} sm={2} />
+            <Col xs={4} sm={3} className="ColMust d-flex align-items-center">
+              {isDateChanged ? weather.date.substring(0, 10) : ""}
+            </Col>
+            <Col xs={2} className="d-flex align-items-center">
+              {weather.date.includes("T09:00") ? <Row>Rano</Row> : null}
+              {weather.date.includes("T12:00") ? <Row>Południe</Row> : null}
+              {weather.date.includes("T18:00") ? <Row>Wieczór</Row> : null}
+            </Col>
+            <Col xs={2}>
+              {weather.date.includes("T09:00") ? (
+                <Image
+                  className="WeatherIcon"
+                  src={`http://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+                  alt={weather.icon}
+                />
+              ) : null}
+              {weather.date.includes("T12:00") ? (
+                <Image
+                  className="WeatherIcon"
+                  src={`http://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+                  alt={weather.icon}
+                />
+              ) : null}
+              {weather.date.includes("T18:00") ? (
+                <Image
+                  className="WeatherIcon"
+                  src={`http://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+                  alt={weather.icon}
+                />
+              ) : null}
+            </Col>
+            <Col xs={2}>
+              {weather.date.includes("T09:00") ? (
+                <Row className="ColumnWhole d-flex align-items-center">
+                  {parseInt(weather.temperature)}°C
+                </Row>
+              ) : null}
+              {weather.date.includes("T12:00") ? (
+                <Row className="ColumnWhole d-flex align-items-center">
+                  {parseInt(weather.temperature)}°C
+                </Row>
+              ) : null}
+              {weather.date.includes("T18:00") ? (
+                <Row className="ColumnWhole d-flex align-items-center">
+                  {parseInt(weather.temperature)}°C
+                </Row>
+              ) : null}
+            </Col>
+          </Row>
+        );
       }
-      weatherListJsx.push(
-        <Row>
-          <Col sm={4}>
-            <Row className="RowMust">
-              {isDateChanged ? lastDate.substring(0, 10) : ""}
-            </Row>
-          </Col>
-          <Col sm={4}>
-            {lastDate.contains("T09:00") ? <Row>Rano</Row> : null}
-            {lastDate.contains("T12:00") ? <Row>Południe</Row> : null}
-            {lastDate.contains("T18:00") ? <Row>Wieczór</Row> : null}
-          </Col>
-          <Col sm={2}>
-            {lastDate.contains("T09:00") ? (
-              <Image
-                src={`http://openweathermap.org/img/wn/${result.icon}@2x.png`}
-                alt={result.icon}
-              />
-            ) : null}
-            {lastDate.contains("T12:00") ? (
-              <Image
-                src={`http://openweathermap.org/img/wn/${result.icon}@2x.png`}
-                alt={result.icon}
-              />
-            ) : null}
-            {lastDate.contains("T18:00") ? (
-              <Image
-                src={`http://openweathermap.org/img/wn/${result.icon}@2x.png`}
-                alt={result.icon}
-              />
-            ) : null}
-          </Col>
-          <Col sm={2}>
-            {lastDate.contains("T09:00") ? (
-              <Row>{parseInt(result.temperature)}°C</Row>
-            ) : null}
-            {lastDate.contains("T12:00") ? (
-              <Row>{parseInt(result.temperature)}°C</Row>
-            ) : null}
-            {lastDate.contains("T18:00") ? (
-              <Row>{parseInt(result.temperature)}°C</Row>
-            ) : null}
-          </Col>
-        </Row>
-      );
     }
 
     return (
@@ -279,7 +338,9 @@ class CarDetails extends Component {
             </Col>
           </Row>
           <Row>
-            <Col sm={6}>{weatherListJsx}</Col>
+            <Col sm={6} className="DetailsContent">
+              {weatherListJsx}
+            </Col>
             <Col sm={6}>
               <Row className="RowMust Center DetailsContent d-flex justify-content-center">
                 Cena za dobę przy oddaniu samochodu w punkcie:

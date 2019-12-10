@@ -20,8 +20,11 @@ class ReservationButton extends React.Component {
       dateFrom,
       dateTo,
       locationIdFrom,
-      locationIdTo
+      locationIdTo,
+      price
     } = this.props;
+
+    console.log(price);
 
     if (localStorage.getItem("token") && localStorage.getItem("token") !== "") {
       return (
@@ -34,7 +37,8 @@ class ReservationButton extends React.Component {
               `&locationIdFrom=${locationIdFrom}` +
               `&locationIdTo=${locationIdTo}`,
             state: {
-              selectedCar: selectedCar
+              selectedCar: selectedCar,
+              price: price
             }
           }}
         >

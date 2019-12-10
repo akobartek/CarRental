@@ -25,16 +25,18 @@ class AppHeader extends Component {
             className="justify-content-end"
           >
             <Nav>
-              {this.props.isUserSignedIn && (
-                <Link className="nav-link" to="/myrentals">
-                  Wypożyczenia
-                </Link>
-              )}
-              {this.props.isUserSignedIn && (
-                <Link className="nav-link" to="/report">
-                  Zgłoś usterkę
-                </Link>
-              )}
+              {this.props.isUserSignedIn &&
+                localStorage.getItem("role") !== "worker" && (
+                  <Link className="nav-link" to="/myrentals">
+                    Wypożyczenia
+                  </Link>
+                )}
+              {this.props.isUserSignedIn &&
+                localStorage.getItem("role") !== "worker" && (
+                  <Link className="nav-link" to="/report">
+                    Zgłoś usterkę
+                  </Link>
+                )}
               {this.props.isUserSignedIn && (
                 <Link className="nav-link" to="/" onClick={this.signOut}>
                   Wyloguj

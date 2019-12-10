@@ -126,8 +126,9 @@ class SearchResult extends React.Component {
     request.setRequestHeader("Content-Type", "application/json");
     request.onload = function() {
       const data = JSON.parse(this.response);
+      console.log(data);
       if (request.status === 200) {
-        changeState(data.map(obj => obj.car));
+        changeState(data);
       } else {
         alert(data);
       }
@@ -158,22 +159,22 @@ class SearchResult extends React.Component {
                 <Row className="RowMust CarListName">
                   <Col sm={12}>
                     <h4>
-                      {result.brand} {result.model}
+                      {result.car.brand} {result.car.model}
                     </h4>
                   </Col>
                 </Row>
                 <Row className="Row CarListInfo d-flex align-items-center">
                   <Col sm={7}>
                     <img
-                      src={`https://car-rental-images.herokuapp.com/cars/${result.image}`}
-                      alt={result.model}
+                      src={`https://car-rental-images.herokuapp.com/cars/${result.car.image}`}
+                      alt={result.car.model}
                     />
                   </Col>
                   <Col sm={5}>
                     <h5>
                       Cena od:
                       <br />
-                      {result.normalCost} zł/dzień
+                      {result.car.normalCost} zł/dzień
                     </h5>
                   </Col>
                 </Row>

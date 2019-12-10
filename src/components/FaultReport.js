@@ -247,7 +247,7 @@ class FaultReport extends React.Component {
               </Row>
               <Row className="Row">
                 <Col className="d-flex">
-                  <div className="flex-grow-1">Niesprawne drzwi:</div>
+                  <div className="flex-grow-1">Zużyte wycieraczki:</div>
                   <div>
                     <Form.Check
                       inline
@@ -270,7 +270,7 @@ class FaultReport extends React.Component {
               </Row>
               <Row className="Row">
                 <Col className="d-flex">
-                  <div className="flex-grow-1">Zużyte wycieraczki:</div>
+                  <div className="flex-grow-1">Awaria klimatyzacji:</div>
                   <div>
                     <Form.Check
                       inline
