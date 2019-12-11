@@ -4,8 +4,6 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import "../AppHeader.css";
 
-// TODO() -> Logged in user = different layout
-
 class AppHeader extends Component {
   signOut = () => {
     localStorage.setItem("token", "");
