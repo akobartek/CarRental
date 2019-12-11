@@ -9,6 +9,7 @@ import "../AppHeader.css";
 class AppHeader extends Component {
   signOut = () => {
     localStorage.setItem("token", "");
+    localStorage.setItem("role", "");
     this.props.signOut();
   };
 

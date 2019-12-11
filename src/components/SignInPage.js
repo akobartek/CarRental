@@ -45,9 +45,9 @@ class SignInPage extends React.Component {
                   request.open("POST", "http://localhost:8080/api/login", true);
                   request.setRequestHeader("Content-Type", "application/json");
                   request.onload = function() {
-                    const data = JSON.parse(this.response);
                     if (request.status === 200) {
-                      if (data !== "") {
+                      if (this.response !== "") {
+                        const data = JSON.parse(this.response);
                         localStorage.setItem("token", data.first);
                         localStorage.setItem("role", data.second);
                         setSubmitting(false);

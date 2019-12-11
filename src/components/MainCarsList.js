@@ -60,7 +60,6 @@ class MainCarList extends React.Component {
     request.setRequestHeader("Content-Type", "application/json");
     request.setRequestHeader("tokenObject", localStorage.getItem("token"));
     request.onload = function() {
-      console.log(this.response);
       if (request.status === 200) {
         changeState();
       } else {
@@ -73,10 +72,8 @@ class MainCarList extends React.Component {
 
   render() {
     const resultListJsx = [];
-    console.log(this.state.results);
     for (let i = 0; i < this.state.results.length; i++) {
       const result = this.state.results[i];
-      const address = result.carRentalUnit.address;
       resultListJsx.push(
         <Col sm={5} key={i} className="CarListItem">
           <Row>
@@ -89,17 +86,25 @@ class MainCarList extends React.Component {
                 </Col>
               </Row>
               <Row className="Row CarListInfo d-flex align-items-center">
-                <Col sm={7}>
+                <Col sm={6}>
                   <img
                     src={`https://car-rental-images.herokuapp.com/cars/${result.car.image}`}
                     alt={result.car.model}
                   />
                 </Col>
                 <Col sm={5}>
-                  <h5>Wypożyczalnia:</h5>
-                  <h6>
-                    {`${address.city} ${address.street} ${address.buildingNumber}/${address.houseNumber}`}
-                  </h6>
+                  <Row className="Row">
+                    <Col>
+                      <h5 style={{ marginBottom: "0px" }}>Rejestracja:</h5>
+                      {result.registrationNumber}
+                    </Col>
+                  </Row>
+                  <Row className="Row">
+                    <Col>
+                      <h5 style={{ marginBottom: "0px" }}>Numer VIN:</h5>
+                      {result.vin}
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
               <Row className="Row">

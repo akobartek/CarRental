@@ -12,12 +12,12 @@ class AddNewCar extends React.Component {
         brand: "Audi",
         models: [
           {
-            model: "A1",
+            model: "A1 Citycarver",
             colors: ["Czarny", "Czerwony", "Biały", "Żółty"],
             cabrioPossible: false
           },
           {
-            model: "A5",
+            model: "Audi A5 Sportback",
             colors: ["Czarny", "Czerwony", "Biały"],
             cabrioPossible: true
           },

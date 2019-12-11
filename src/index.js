@@ -19,7 +19,10 @@ registerLocale("pl", pl);
 setDefaultLocale("pl");
 
 class App extends React.Component {
-  state = { isUserSignedIn: localStorage.getItem("token") !== "" };
+  state = {
+    isUserSignedIn:
+      localStorage.getItem("token") && localStorage.getItem("token") !== ""
+  };
 
   changeSignIn = () => {
     this.setState({

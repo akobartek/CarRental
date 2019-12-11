@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Image } from "react-bootstrap";
+import { Container, Row, Col, Image, Button } from "react-bootstrap";
 import LoadingModal from "./LoadingModal";
 
 class MyRentals extends React.Component {
@@ -24,6 +24,7 @@ class MyRentals extends React.Component {
     request.onload = function() {
       let data = JSON.parse(this.response);
       if (request.status === 200) {
+        console.log(data);
         changeState(data);
       } else {
         alert(data);
@@ -40,39 +41,52 @@ class MyRentals extends React.Component {
       const addressEnd = this.state.rentals[i].carRentalUnitEnd.address;
 
       rentalListJsx.push(
-        <Link key={i} to={`/getReports/${this.state.rentals[i].hireId}`}>
-          <Row className="RentalListItem">
-            <Col sm={4} className="d-flex align-items-center">
-              <Image
-                src={`https://car-rental-images.herokuapp.com/cars/${car.image}`}
-                alt={car.model}
-              />
-            </Col>
-            <Col sm={8}>
-              <div className="ColumnWhole d-flex flex-column">
-                <Row className="RowEnd d-flex align-item-start justify-content-end">
-                  <h5>
-                    Początek:
-                    {` ${addressStart.city} ${addressStart.street} ${addressStart.buildingNumber}/${addressStart.houseNumber}, ${this.state.rentals[i].dateFrom}`}
-                  </h5>
-                </Row>
-                <Row className="RowMust CarListName d-flex align-items-center flex-grow-1">
-                  <Col sm={12}>
-                    <h2>
-                      {car.brand} {car.model}
-                    </h2>
-                  </Col>
-                </Row>
-                <Row className="RowEnd d-flex align-items-end justify-content-end">
-                  <h5>
-                    Koniec:
-                    {` ${addressEnd.city} ${addressEnd.street} ${addressEnd.buildingNumber}/${addressEnd.houseNumber}, ${this.state.rentals[i].dateTo}`}
-                  </h5>
-                </Row>
-              </div>
-            </Col>
-          </Row>
-        </Link>
+        <Row key={i} className="RentalListItem">
+          <Col sm={12}>
+            <Row className="Row Center">
+              <Col sm={4} style={{ marginBottom: "10px" }}>
+                Zapłacono: {this.state.rentals[i].costPerDay}zł/dzień
+              </Col>
+              <Col sm={4} />
+              <Col sm={4}>
+                <Link to={`/getReports/${this.state.rentals[i].hireId}`}>
+                  <Button variant="outline-dark">Historia usterek</Button>
+                </Link>
+              </Col>
+            </Row>
+            <Row className="Row">
+              <Col sm={4} className="d-flex align-items-center">
+                <Image
+                  src={`https://car-rental-images.herokuapp.com/cars/${car.image}`}
+                  alt={car.model}
+                />
+              </Col>
+              <Col sm={8}>
+                <div className="ColumnWhole d-flex flex-column">
+                  <Row className="RowEnd d-flex align-item-start justify-content-end">
+                    <h5>
+                      Początek:
+                      {` ${addressStart.city} ${addressStart.street} ${addressStart.buildingNumber}/${addressStart.houseNumber}, ${this.state.rentals[i].dateFrom}`}
+                    </h5>
+                  </Row>
+                  <Row className="RowMust CarListName d-flex align-items-center flex-grow-1">
+                    <Col sm={12}>
+                      <h2>
+                        {car.brand} {car.model}
+                      </h2>
+                    </Col>
+                  </Row>
+                  <Row className="RowEnd d-flex align-items-end justify-content-end">
+                    <h5>
+                      Koniec:
+                      {` ${addressEnd.city} ${addressEnd.street} ${addressEnd.buildingNumber}/${addressEnd.houseNumber}, ${this.state.rentals[i].dateTo}`}
+                    </h5>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       );
     }
 

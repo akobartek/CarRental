@@ -126,7 +126,6 @@ class SearchResult extends React.Component {
     request.setRequestHeader("Content-Type", "application/json");
     request.onload = function() {
       const data = JSON.parse(this.response);
-      console.log(data);
       if (request.status === 200) {
         changeState(data);
       } else {
@@ -283,7 +282,12 @@ class SearchResult extends React.Component {
                         maxValue={500}
                         formatLabel={value => `${value} KM`}
                         value={this.state.horsePower}
-                        onChange={value => this.setState({ horsePower: value })}
+                        onChange={value =>
+                          this.setState({
+                            horsePower: value,
+                            filtersUpdated: true
+                          })
+                        }
                       />
                     </Col>
                   </Row>

@@ -92,7 +92,7 @@ class FaultList extends React.Component {
               <h1>
                 {this.state.rentals.length > 0
                   ? "Aktualne wypożyczenia"
-                  : "Nie wypożyczono żadnego samochodu!"}
+                  : "Aktualnie nie trwa żadne wypożeczenie!"}
               </h1>
             </Col>
           </Row>
