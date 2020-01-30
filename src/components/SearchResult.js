@@ -9,6 +9,12 @@ import "react-input-range/lib/css/index.css";
 import FilterButton from "./FilterButton";
 import LoadingModal from "./LoadingModal";
 
+function addDays(date, days) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
 class SearchResult extends React.Component {
   constructor(props) {
     super(props);
@@ -43,18 +49,30 @@ class SearchResult extends React.Component {
   }
 
   setStartDate = date => {
-    this.state.minDate.setDate(date.getDate() + 1);
-    this.state.maxDate.setDate(date.getDate() + 14);
+    const newMinDate = addDays(date, 1);
+    const newMaxDate = addDays(date, 13);
 
-    if (date >= this.state.dateTo)
-      this.state.dateTo.setDate(date.getDate() + 1);
-    if (this.state.dateTo > this.state.maxDate)
-      this.state.dateTo.setDate(this.state.maxDate.getDate());
-
-    this.setState({
-      dateFrom: date,
-      filtersUpdated: true
-    });
+    if (date >= this.state.dateTo) {
+      this.setState({
+        minDate: newMinDate,
+        maxDate: newMaxDate,
+        dateFrom: date,
+        dateTo: newMinDate
+      });
+    } else if (this.state.dateTo.getTime() > newMaxDate.getTime()) {
+      this.setState({
+        minDate: newMinDate,
+        maxDate: newMaxDate,
+        dateFrom: date,
+        dateTo: newMaxDate
+      });
+    } else {
+      this.setState({
+        minDate: newMinDate,
+        maxDate: newMaxDate,
+        dateFrom: date
+      });
+    }
   };
 
   setEndDate = date => {

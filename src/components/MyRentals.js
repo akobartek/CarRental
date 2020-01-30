@@ -24,7 +24,6 @@ class MyRentals extends React.Component {
     request.onload = function() {
       let data = JSON.parse(this.response);
       if (request.status === 200) {
-        console.log(data);
         changeState(data);
       } else {
         alert(data);
@@ -40,12 +39,18 @@ class MyRentals extends React.Component {
       const addressStart = this.state.rentals[i].carRentalUnitStart.address;
       const addressEnd = this.state.rentals[i].carRentalUnitEnd.address;
 
+      const days =
+        (new Date(this.state.rentals[i].dateTo).getTime() -
+          new Date(this.state.rentals[i].dateFrom).getTime()) /
+          (1000 * 3600 * 24) +
+        1;
+
       rentalListJsx.push(
         <Row key={i} className="RentalListItem">
           <Col sm={12}>
             <Row className="Row Center">
               <Col sm={4} style={{ marginBottom: "10px" }}>
-                Zapłacono: {this.state.rentals[i].costPerDay}zł/dzień
+                <b>Zapłacono: {this.state.rentals[i].costPerDay * days}zł</b>
               </Col>
               <Col sm={4} />
               <Col sm={4}>

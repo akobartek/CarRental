@@ -29,7 +29,7 @@ class MainSearchForm extends React.Component {
 
   setStartDate = date => {
     const newMinDate = addDays(date, 1);
-    const newMaxDate = addDays(date, 14);
+    const newMaxDate = addDays(date, 13);
 
     if (date >= this.state.dateTo) {
       this.setState({

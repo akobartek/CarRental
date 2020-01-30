@@ -74,33 +74,56 @@ class CarDetails extends Component {
           obj => obj.first.carInstanceId === selectedCar.carInstanceId
         ).second;
         changeState(
-          Object.entries(carRentalObjects).map(obj => [
-            JSON.parse(
-              obj[0]
-                .replace("CarRentalUnit", "")
-                .replace("Address", "")
-                .replace("carRentalUnitId", '"carRentalUnitId"')
-                .replace("optimalQuantityCityCars", '"optimalQuantityCityCars"')
-                .replace(
-                  "optimalQuantityOffroadCars",
-                  '"optimalQuantityOffroadCars"'
-                )
-                .replace(
-                  "optimalQuantityDeliveryCars",
-                  '"optimalQuantityDeliveryCars"'
-                )
-                .replace("address", '"address"')
-                .replace("addressId", '"addressId"')
-                .replace("buildingNumber", '"buildingNumber"')
-                .replace("city", '"city"')
-                .replace("country", '"country"')
-                .replace("houseNumber", '"houseNumber"')
-                .replace("street", '"street"')
-                .replaceAll("=", ":")
-                .replaceAll("'", '"')
-            ),
-            obj[1]
-          ])
+          Object.entries(carRentalObjects)
+            .map(obj => [
+              JSON.parse(
+                obj[0]
+                  .replace("CarRentalUnit", "")
+                  .replace("Address", "")
+                  .replace("carRentalUnitId", '"carRentalUnitId"')
+                  .replace(
+                    "optimalQuantityCityCars",
+                    '"optimalQuantityCityCars"'
+                  )
+                  .replace(
+                    "optimalQuantityOffroadCars",
+                    '"optimalQuantityOffroadCars"'
+                  )
+                  .replace(
+                    "optimalQuantityDeliveryCars",
+                    '"optimalQuantityDeliveryCars"'
+                  )
+                  .replace("address", '"address"')
+                  .replace("addressId", '"addressId"')
+                  .replace("buildingNumber", '"buildingNumber"')
+                  .replace("city", '"city"')
+                  .replace("country", '"country"')
+                  .replace("houseNumber", '"houseNumber"')
+                  .replace("street", '"street"')
+                  .replaceAll("=", ":")
+                  .replaceAll("'", '"')
+              ),
+              obj[1]
+            ])
+            .sort((elem1, elem2) => {
+              if (elem1[0].address.city > elem2[0].address.city) return 1;
+              else if (elem1[0].address.city < elem2[0].address.city) return -1;
+              else if (elem1[0].address.street > elem2[0].address.street)
+                return 1;
+              else if (elem1[0].address.street < elem2[0].address.street)
+                return -1;
+              else if (
+                elem1[0].address.buildingNumber >
+                elem2[0].address.buildingNumber
+              )
+                return 1;
+              else if (
+                elem1[0].address.buildingNumber <
+                elem2[0].address.buildingNumber
+              )
+                return -1;
+              else return 0;
+            })
         );
       } else {
         alert(data);
@@ -125,10 +148,34 @@ class CarDetails extends Component {
           weatherFetched: true
         });
     };
+
+    let city = "";
+    switch (parseInt(this.state.locationIdFrom)) {
+      case 1:
+        city = "Walbrzych";
+        break;
+      case 2:
+        city = "Klodzko";
+        break;
+      case 3:
+        city = "Legnica";
+        break;
+      case 4:
+        city = "Lubin";
+        break;
+      case 5:
+      case 6:
+      case 7:
+        city = "Wroclaw";
+        break;
+      default:
+        city = "";
+    }
+
     const request = new XMLHttpRequest();
     request.open(
       "GET",
-      "https://car-rental-weather.herokuapp.com/forecast?city=Wroclaw",
+      `https://car-rental-weather.herokuapp.com/forecast?city=${city}`,
       true
     );
     request.setRequestHeader("Content-Type", "application/json");
@@ -157,8 +204,8 @@ class CarDetails extends Component {
           <Row className="Row Center d-flex align-items-center">
             <Col sm={1} />
             <Col sm={7}>
-              {`${price[0].address.city} ${price[0].address.street} ${price[0].address.buildingNumber}/${price[0].address.houseNumber}`}
-              : {price[1].toFixed(2)}zł
+              {`${price[0].address.city}, ${price[0].address.street} ${price[0].address.buildingNumber}/${price[0].address.houseNumber}`}
+              : <b>{price[1]}zł</b>
             </Col>
             <Col sm={2}>
               <ReservationButton

@@ -22,11 +22,18 @@
   margin: auto;
   margin-top: 5vh;
   margin-bottom: 5vh;
-  width: 80vh;
+  max-width: 100vh;
   padding: 10px;
   border: 1px solid black;
   border-radius: 5px;
   color: #000;
+}
+
+@media screen and (max-width: 768px) {
+  .AddCar-body {
+    margin-left: 2vh;
+    margin-right: 2vh;
+  }
 }
 
 .SearchResult-body {

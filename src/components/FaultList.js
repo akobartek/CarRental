@@ -34,6 +34,7 @@ class FaultList extends React.Component {
 
   render() {
     const rentalListJsx = [];
+    console.log(this.state.rentals);
     for (let i = 0; i < this.state.rentals.length; i++) {
       const car = this.state.rentals[i].carInstance.car;
       const addressStart = this.state.rentals[i].carRentalUnitStart.address;

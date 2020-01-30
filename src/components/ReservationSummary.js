@@ -40,7 +40,7 @@ class ReservationSummary extends React.Component {
       if (request.status === 200) {
         showModal();
       } else {
-        alert("Nie udało się zarezerwować samochodu, spróbuj ponownie!");
+        alert("Nie posiadasz uprawnień do prowadzenia tego pojazdu!");
       }
     };
 

@@ -24,8 +24,6 @@ class ReservationButton extends React.Component {
       price
     } = this.props;
 
-    console.log(price);
-
     if (localStorage.getItem("token") && localStorage.getItem("token") !== "") {
       return (
         <Link
